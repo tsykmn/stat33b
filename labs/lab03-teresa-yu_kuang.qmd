@@ -1,0 +1,438 @@
+---
+title: "Lab 3: Matrices and Lists"
+subtitle: "Stat 33B"
+author: "Gaston Sanchez"
+format: 
+  html:
+    toc: true
+    number-sections: true
+    theme: simplex
+embed-resources: true
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+::: {.callout-tip icon="false"}
+## Learning Objectives
+
+-   Get started with matrices
+-   Get started with lists
+-   Understand basic operations
+-   Understand bracket and dollar notations
+:::
+
+::: {.callout-note icon="false"}
+## General Instructions
+
+-   Write your code and content in a `qmd` (quarto markdown) file. You
+    can use the provided source `qmd` file (bCourses).
+
+-   Rename this file as `lab03-first-last.qmd`, where `first` and `last`
+    are your first and last names (e.g. `lab03-gaston-sanchez.qmd`).
+
+-   Make sure the YAML header in your `qmd` files includes
+    `embed-resources: true`.
+
+-   Submit both your qmd and HTML files to the corresponding assignment
+    submission in bCourses.
+
+-   Please note that if you only submit one file (either HTML or qmd),
+    an automatic 10% deduction will be applied.
+
+-   Please note that if you submit the incorrect files you will receive
+    no credit.
+:::
+
+------------------------------------------------------------------------
+
+## Introduction {.unnumbered}
+
+The purpose of this assignment is to work with various data structures
+in R (e.g. vectors of different data types, factors, arrays, and lists).
+
+Use this assignment to start developing your manipulation skills of
+basic data objects in R: use of bracket notation, understanding atomic
+vs non-atomic objects, vectorization, coercion rules, recycling, etc.
+
+------------------------------------------------------------------------
+
+## Matrices Recap
+
+In lecture, you were introduced to the function `matrix()` which is the
+primary function to create matrices in R. `matrix()` takes---ideally---a
+vector `x` as input, and returns a matrix arranging the elements in `x`
+according to the specified number of rows `nrow` and columns `ncol`. For
+example:
+
+```{r}
+# example 1
+m1 <- matrix(1:6, nrow = 2, ncol = 3)
+m1
+```
+
+```{r}
+# example 2
+m2 <- matrix(1:6, nrow = 2, ncol = 3, byrow = TRUE)
+m2
+```
+
+```{r}
+# example 3
+m3 <- matrix(1:6, nrow = 3, ncol = 2)
+m3
+```
+
+### Subsetting
+
+As discussed in class, to do subsetting (i.e. subscripting, indexing) on
+a matrix, you use bracket notation, passing two indexing vectors
+separated by a comma: the first one for indexing rows, the second one
+for indexing columns.
+
+```{r}
+# cell in row 1, column 3 of matrix m1
+m1[1,3]
+```
+
+```{r}
+# 2nd column of matrix m2
+m2[ ,2]
+```
+
+```{r}
+# 1st row of matrix m3
+m3[1, ]
+```
+
+### Row and Column binding
+
+Another way to form matrices is by joining or *binding* either vectors
+or matrices by rows---with `rbind()`---or by columns---with `cbind()`.
+For example:
+
+```{r}
+a <- c(2, 4, 6)
+b <- c(1, 3, 5)
+```
+
+```{r}
+# column bind
+cbind(a, b)
+```
+
+```{r}
+cbind(m3, b)
+```
+
+```{r}
+# row bind
+rbind(b, a)
+```
+
+```{r}
+rbind(m2, a)
+```
+
+------------------------------------------------------------------------
+
+## Your Turn: matrices
+
+a)  Use `matrix()` to create a matrix `mat1` (see below) from the input
+    vector `x = letters[1:15]`:
+
+```         
+# mat1
+"a"  "d"  "g"  "j"  "m" 
+"b"  "e"  "h"  "k"  "n" 
+"c"  "f"  "i"  "l"  "o"
+```
+
+```{r}
+# your code
+mat1 = matrix(letters[1:15], nrow = 3, ncol = 5)
+mat1
+```
+
+b)  Use `matrix()` to create a matrix `mat2` (see below) from the input
+    vector `y = month.name`:
+
+```         
+# mat2
+"January" "February" "March"    
+"April"   "May"      "June"     
+"July"    "August"   "September"
+"October" "November" "December" 
+```
+
+```{r}
+# your code
+mat2 = matrix(month.name, nrow = 4, ncol = 3, byrow=TRUE)
+mat2
+```
+
+c)  Use `matrix()`---and its recycling principle---to create a matrix
+    `mat3` (see below) from the input vector `a = c(3, 6, 9)`:
+
+```         
+# mat3
+3    3    3
+6    6    6
+9    9    9
+```
+
+```{r}
+# your code
+mat3 = matrix(c(3,6,9), nrow=3, ncol=3)
+mat3
+```
+
+d)  Use `matrix()`---and its recycling principle---to create a matrix
+    `mat4` (see below) from the input vector `a = c(3, 6, 9)`:
+
+```         
+# mat4
+3    3    3
+6    6    6
+9    9    9
+3    3    3
+6    6    6
+9    9    9
+```
+
+```{r}
+# your code
+mat4 = matrix(c(3,6,9), nrow=6, ncol=3)
+mat4
+```
+
+e)  Use `matrix()`---and its recycling principle---to create a matrix
+    `mat5` (see below) from the input vector `a = c(3, 6, 9)`:
+
+```         
+# mat5
+3    3    3    3    3    3
+6    6    6    6    6    6
+9    9    9    9    9    9
+```
+
+```{r}
+# your code
+mat5 = matrix(c(3,6,9), nrow=3, ncol=6)
+mat5
+```
+
+f)  Create matrix `mat6` (see below) from first three rows of `mat2`,
+    and last three rows of `mat4`. *Hint*: try creating the matrix using
+    `rbind()`.
+
+```         
+# mat6
+"January" "February" "March"    
+"April"   "May"      "June"     
+"July"    "August"   "September"
+"3"       "3"        "3"        
+"6"       "6"        "6"        
+"9"       "9"        "9" 
+```
+
+```{r}
+# your code
+
+mat6 = rbind(mat2[1:3,], mat4[(nrow(mat4)-2):nrow(mat4), ])
+mat6
+```
+
+g)  Look at the documentation of `diag()` and find out how to use it to
+    extract the elements in the diagonal of `mat3` (see below)
+
+```         
+3  6  9
+```
+
+```{r}
+# your code
+diag(mat3)
+```
+
+h)  Use the `diag()` function to create an **identity matrix** of
+    dimensions 4 rows and 4 columns (see below). BTW: An identity matrix
+    is a matrix with the same number of rows and columns, has ones in
+    the diagonal, and zeroes off-diagonal.
+
+```         
+1    0    0    0
+0    1    0    0
+0    0    1    0
+0    0    0    1
+```
+
+```{r}
+# your code
+diag(1, nrow=4, ncol=4)
+```
+
+i)  With matrix `mat1`, use bracket notation to write commands in order
+    to input a couple of missing values (see below)
+
+```         
+# missing values
+"a"  "d"  "g"  "j"  NA  
+"b"  "e"  NA   "k"  "n" 
+NA   "f"  "i"  "l"  "o" 
+```
+
+```{r}
+# your code
+mat1[3] = NA
+mat1[2,3] = NA
+mat1[1,5] = NA
+mat1
+```
+
+l)  See how to use the functions `rownames()` and `colnames()` to give
+    names to the rows and the columns of matrix `mat1`. Choose any names
+    you want, and display matrix `mat1`
+
+```{r}
+# your code
+rownames(mat1) = c("R1", "R2", "R3")
+colnames(mat1) = c("C1", "c2", "c3", "c4", "c5")
+print(mat1)
+```
+
+------------------------------------------------------------------------
+
+## Lists
+
+Consider the following list:
+
+```{r}
+ron <- list(
+  name = 'Ron Weasley',
+  age = 18L,
+  weight = 152,
+  pure_blood = TRUE,
+  sport = 'quidditch'
+)
+```
+
+Write R commands---displaying the output---to answer the following
+questions:
+
+a)  What is the `class()` of `ron`?
+
+```{r}
+# your code
+class(ron)
+```
+
+b)  How many elements are in `ron` (i.e. what's the length of this
+    object)?
+
+```{r}
+# your code
+length(ron)
+```
+
+c)  What is the data type of the element `age`?
+
+```{r}
+# your code
+typeof(ron["age"])
+```
+
+d)  If you use `c()` to combine `age`, `weight`, and `pure_blood` in a
+    new vector, what is the data type of this vector?
+
+```{r}
+# your code
+typeof(c("age", "weight", "pure_blood"))
+```
+
+------------------------------------------------------------------------
+
+## Planets
+
+Here are some vectors with data about the planets of the Solar system.
+
+```{r}
+planet <- c('Mercury',	'Venus', 'Earth', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune')
+
+mass <- c(0.33, 4.87, 5.97, 0.642, 1898, 568, 86.8, 102)
+
+temperature <- c(167L, 464L, 15L, -65L, -110L, -140L, -195L, -200L)
+
+moons <- c(0L, 0L, 1L, 2L, 79L, 62L, 27L, 14L)
+
+rings <- c(FALSE, FALSE, FALSE, FALSE, TRUE, TRUE, TRUE, TRUE)
+```
+
+### Your Turn: `solar` list
+
+a)  Use these vectors to create a list `solar`. When printed, your
+    `solar` list should be displayed as:
+
+```         
+$planet
+[1] "Mercury" "Venus"   "Earth"   "Mars"    "Jupiter" "Saturn"  "Uranus"  "Neptune"
+
+$mass
+[1]    0.330    4.870    5.970    0.642 1898.000  568.000   86.800  102.000
+
+$temperature
+[1]  167  464   15  -65 -110 -140 -195 -200
+
+$moons
+[1]  0  0  1  2 79 62 27 14
+
+$rings
+[1] FALSE FALSE FALSE FALSE  TRUE  TRUE  TRUE  TRUE
+```
+
+```{r}
+# your solar list
+solar = list('planet'= planet, 'mass'= mass, 'temperature'=temperature, 'moons'=moons, 'rings'= rings)
+print(solar)
+```
+
+### Your Turn: Manipulation of `solar`
+
+Use the list `solar` to write R commands---displaying the output---that
+answer the following questions (use only the list `solar`, NOT the
+individual vectors):
+
+a)  What is the name of the lightest planet? *Hint*: the `which.min()`
+    function is your friend.
+
+```{r}
+# your code
+solar$planet[which.min(solar$mass)]
+```
+
+b)  What is the temperature of the planet with the most number of moons?
+    *Hint*: the `which.max()` function is your friend.
+
+```{r}
+# your code
+solar$planet[which.max(solar$moons)]
+```
+
+c)  How many planets have temperatures less than or equal to zero?
+
+```{r}
+# your code
+solar$planet[solar$temperature <= 0]
+```
+
+d)  What is the 80th percentile of temperature for planets that have no
+    rings? *Hint*: the `quantile()` function is your friend.
+
+```{r}
+# your code
+quantile(solar$temperature[solar$rings==FALSE], probs=0.8)
+```

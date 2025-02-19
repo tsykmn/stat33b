@@ -1,0 +1,458 @@
+---
+title: "Lab 4: Data Frames"
+subtitle: "Stat 33B"
+author: "Gaston Sanchez"
+format: 
+  html:
+    toc: true
+    number-sections: true
+    theme: simplex
+embed-resources: true
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+::: {.callout-tip icon="false"}
+## Learning Objectives
+
+-   Get started with data frames
+-   Understand basic operations
+-   Understand bracket and dollar notations
+:::
+
+::: {.callout-note icon="false"}
+## General Instructions
+
+-   Write your code and content in a `qmd` (quarto markdown) file. You
+    can use the provided source `qmd` file (bCourses).
+
+-   Rename this file as `lab04-first-last.qmd`, where `first` and `last`
+    are your first and last names (e.g. `lab04-gaston-sanchez.qmd`).
+
+-   Make sure the YAML header in your `qmd` files includes
+    `embed-resources: true`.
+
+-   Submit both your qmd and HTML files to the corresponding assignment
+    submission in bCourses.
+
+-   Please note that if you only submit one file (either HTML or qmd),
+    an automatic 10% deduction will be applied.
+
+-   Please note that if you submit the incorrect files you will receive
+    no credit.
+:::
+
+## Introduction
+
+The purpose of this assignment is to work with data frames which are the
+dedicated objects in R to handle tabular data.
+
+------------------------------------------------------------------------
+
+## NBA Players
+
+The data for this section is in the file `nba2018-players.csv`
+(available in bCourses, in the same folder containing this `Rmd` file).
+
+Download a copy of the CSV file, and place it in your computer in the
+same folder where you have your `Rmd` file for this lab.
+
+Here's a suggestion for importing---in a "quick and dirty" way---the
+table into a data frame called `nba`
+
+```{r}
+# import using 'read.csv()'
+nba <- read.csv('nba2018-players.csv')
+```
+
+### Your Turn: Inspecting data frames
+
+Once you have your data frame `nba`, the next step involves performing a
+first exploration. Here are some common functions that you can use to
+get generic information about any data frame. Run them in your Rmd file
+and see what happens:
+
+``` r
+# inspect the data structure of 'nba'
+str(nba, vec.len = 1)
+
+# display the names of columns in 'nba'
+names(nba)
+colnames(nba)
+
+# take a look at the first 5 rows
+head(nba, n = 5)
+
+# take a look at the last 3 rows
+tail(nba, n = 3)
+
+# summary statistics
+summary(nba)
+```
+
+------------------------------------------------------------------------
+
+## Filtering, Slicing, and Selecting
+
+Perhaps the most basic operations have to do with selecting rows and
+columns. Analysts tend to refer to these operations in various ways:
+filtering, slicing, and selecting. Here's a description of such
+operations.
+
+**Slicing** has to do with selecting rows by indicating their index
+position. Using bracket notation, you pass a numeric vector for the
+rows:
+
+```{r eval = TRUE}
+# first three rows
+three_rows <- nba[1:3, ]
+three_rows
+```
+
+**Filtering** involves selecting rows by specifying a certain (logical)
+condition. The selected rows will be those for which the condition is
+TRUE.
+
+```{r results='hide'}
+# subset rows given a condition
+# (Golden State Warrior players)
+warriors <- nba[nba$team == "GSW", ]
+warriors
+```
+
+**Selecting** has to do with selecting columns by name (or position).
+Using bracket notation, you pass a character vector with the names of
+the columns for the column-index:
+
+```{r results='hide'}
+weight_height <- nba[ ,c('player', 'weight', 'height')]
+head(weight_height)
+```
+
+### Your Turn
+
+a)  slice the data by selecting the first 5 rows
+
+```{r}
+# your code
+nba[1:5, ]
+```
+
+b)  slice the data by selecting rows 3, 6, 9, 12, 15, ..., 30. *Hint*:
+    the `seq()` function is your friend.
+
+```{r}
+# your code
+nba[seq(3,30,3),]
+```
+
+c)  slice the data by selecting the last 5 rows; try doing this without
+    using `tail()`, and without hard coding the numbers of the last five
+    rows. *Hint*: the `nrow()` function is your friend.
+
+```{r}
+# your code
+nba[(nrow(nba)-4):nrow(nba),]
+```
+
+d)  create a data frame `age35s` by filtering the data with those
+    players ages greater than or equal to 35 years old, and display its
+    dimensions with `dim()`
+
+```{r}
+# your code
+age35s <- nba[nba$age >= 35,]
+age35s
+dim(age35s)
+```
+
+e)  create a data frame `young_centers` by filtering players of age less
+    than 20 years old that play the *Center* position (`"C"`); display
+    this data
+
+```{r}
+# your code
+young_centers <- nba[nba$age < 20 & nba$position == "C",]
+young_centers
+```
+
+------------------------------------------------------------------------
+
+## Modifying variables, and adding/removing variables
+
+Another basic data-table manipulation task involves adding new
+variables. Let's create a small data frame `heavy` by filtering players
+that weigh 275 lbs or more, and gathering columns player, team, weight
+and height:
+
+```{r}
+# creating a small data frame
+heavy <- nba[nba$weight >= 275, c('player', 'team', 'weight', 'height')]
+heavy
+```
+
+If you want to modify the values in column weight (currently expressed
+in lbs) so that they are expressed in kilos (1 lb = 0.453592 kilos),
+then you can simply reassign the values in this column by multiplying by
+0.453592:
+
+```{r}
+heavy$weight <- heavy$weight * 0.453592
+heavy
+```
+
+Say you want to add a column `wt_ht` to `heavy` with the ratio
+`weight / height`. Here's how to do it:
+
+```{r}
+heavy$wt_ht <- heavy$weight / heavy$height
+heavy
+```
+
+To remove a variable, you just have to *NULLify* it
+
+```{r}
+heavy$wt_ht <- NULL
+heavy
+```
+
+### Your Turn: Adding/Removing Variables
+
+a)  using the data frame `heavy`, add a new variable `product` with the
+    product of `weight` and `height`.
+
+```{r}
+# your code
+heavy$product <- heavy$weight * heavy$height
+heavy
+```
+
+b)  create a new data frame `log_heavy`, by making a copy of table
+    `heavy`, and then add columns `log_weight` and `log_height` with the
+    log transformations of `weight` and `height` to table `log_heavy`.
+
+```{r}
+# your code
+log_heavy <- heavy
+log_heavy$log_weight <- log(log_heavy$weight)
+log_heavy$log_height <- log(log_heavy$height)
+log_heavy
+```
+
+c)  with the data frame `log_heavy`, remove columns `weight` and
+    `height`
+
+```{r}
+# your code
+log_heavy$weight <- NULL
+log_heavy$height <- NULL
+log_heavy
+```
+
+------------------------------------------------------------------------
+
+## Rearranging rows
+
+Another common type of task consists of reordering rows. For example,
+say you want to get a data frame `heavy2` by ordering the rows in table
+`heavy` by column `height`. You can use the `order()` function which
+will give you indices of values in ascending order by default:
+
+```{r}
+heavy2 <- heavy[order(heavy$height), ]
+heavy2
+```
+
+If you want to sort them in **decreasing** order, then specify the
+argument `decreasing = TRUE`
+
+```{r}
+heavy3 <- heavy[order(heavy$height, decreasing = TRUE), ]
+heavy3
+```
+
+### Your Turn: Rearranging
+
+a)  use the original data frame `nba` to create a data frame
+    `short_players` by *filtering* those players with height less than
+    or equal to 71 inches, arranging rows by height (in ascending order)
+
+```{r}
+# your code
+short_players <- nba[nba$height <= 71 & order(nba$height, decreasing = FALSE),]
+short_players
+```
+
+b)  use the original data frame `nba` to create a data frame
+    `tall_players` by *filtering* those players with height greater than
+    85 in, arranging rows by height decreasing `order()`.
+
+```{r}
+# your code
+tall_players <- nba[nba$height >= 85 & order(nba$height, decreasing = TRUE),]
+tall_players
+```
+
+------------------------------------------------------------------------
+
+### Important Note
+
+*The following sections in Part II **are optional** and you don't need
+to submit solutions for them. These additional sections are provided to
+give you more practice problems.*
+
+------------------------------------------------------------------------
+
+## More Data Manipulation
+
+Use bracket notation, the dollar operator, as well as concepts of
+logical subsetting and indexing to:
+
+a)  Using `nba`, create a data frame `lakers` by filtering players of
+    team *Los Angeles Lakers* (`"LAL"`), and display its dimensions with
+    `dim()`
+
+```{r}
+# your code
+lakers <- nba[nba$team == "LAL",]
+lakers
+dim(lakers)
+```
+
+b)  Create a data frame `top_salary` by filtering those players earning
+    more than 25 million dollars, and select columns `player`, `team`,
+    `salary`, `points` (in this order)
+
+```{r}
+# your code
+top_salary <- nba[nba$salary > (25000000), c("player", "team", "salary", "points")]
+top_salary
+```
+
+c)  Subset `nba` to obtain the name and weight of the heaviest player(s)
+
+```{r}
+# your code
+nba[(nba$weight == max(nba$weight)), c("player", "weight")]
+```
+
+d)  Subset `nba` to obtain the name, team, and height of the tallest
+    player(s)
+
+```{r}
+# your code
+nba[(nba$height == max(nba$height)), c("player", "height")]
+```
+
+------------------------------------------------------------------------
+
+## Some basic `"graphics"`
+
+R is well known for its graphics and data visualization capabilities. In
+fact, there is a large number of packages that allow us to produce
+almost any kind of visual display. In this section, we want to give you
+a brief exposure to the function `plot()` which is the workhorse
+plotting function in R. This function is actually a *method*, meaning
+that it behaves differently depending on the type of input.
+
+BTW: in another lecture you will also learn about the R package
+`"ggplot2"` to produce nicer graphs in a more consistent form.
+
+As you can tell, the `nba` data contains 15 variables. To start
+exploring the content, we begin by producing graphics for each single
+variable, focused on looking at their distributions:
+
+-   Quantitative variables: histogram, boxplot
+
+-   Qualitative variables: barchart (and piechart)
+
+Perhaps the most common usage of `plot()` is to get a scatterplot, for
+example a graph of height and weight:
+
+``` r
+plot(nba$height, nba$weight)
+```
+
+For a quantitative variable, the typical graphics to examine the
+distribution are histograms (`hist()`) and boxplots (`boxplot()`)
+
+``` r
+hist(nba$height)
+boxplot(nba$height, horizontal = TRUE)
+```
+
+For a categorical variable, the typical graphic to examine the
+distribution is a barchart (`barplot()`). Unless the variable you are
+trying to graph is of class `"factor"`, you will first need to obtain a
+frequency table with `table()`
+
+```{r}
+table(nba$position)
+```
+
+and then you can pass this to `barplot()`
+
+``` r
+barplot(table(nba$position))
+```
+
+Here is how to permanently convert `position` into a `"factor"` with the
+homonym function `factor()`
+
+```{r}
+nba$position = factor(nba$position)
+```
+
+Having transformed `position` into a `"factor"` now you can simply use
+`plot()` to obtain a barchart, without having to invoke `table()`:
+
+``` r
+plot(nba$position)
+```
+
+### Your turn
+
+Find out what kind of graphic is returned by `plot()` when you pass it
+the following inputs:
+
+a)  a 2-column data frame with one factor in the first column, and one
+    numeric vector in the second column: e.g. `team` (converted as
+    factor) and `height`
+
+```{r}
+nba$team = factor(nba$team)
+
+# your code
+plot(nba$team, nba$height)
+```
+
+b)  a 2-column data frame with one numeric vector in the first column,
+    and one factor in the second column: e.g. `points` and `team`
+
+```{r}
+# your code
+plot(nba$points, nba$team)
+```
+
+c)  a data frame with more than two numeric columns: `height`, `weight`,
+    and `points`
+
+```{r}
+# your code
+plot(nba[,c("height", "weight", "points")])
+```
+
+d)  invoke `plot()` to make a scatterplot of `height` and `weight`,
+    using `position` as a `factor()` to specify colors with the argument
+    `col`
+
+```{r}
+# your code
+plot(height ~ weight, data = nba, col = factor(position))
+
+```
