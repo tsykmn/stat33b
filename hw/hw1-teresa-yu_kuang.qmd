@@ -1,0 +1,540 @@
+---
+title: "HW1) Atomic Objects"
+subtitle: "Stat 33B, Spring 2025"
+author: "Your Name"
+format: 
+  html:
+    toc: true
+    number-sections: true
+    theme: cerulean
+embed-resources: true
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, error = TRUE)
+```
+
+::: {.callout-note icon="false"}
+## General Instructions
+
+-   Write your code and content in a `qmd` (quarto markdown) file. You
+    can use the template file `hw1-template.qmd` provided in bCourses.
+
+-   Name this file as `hw1-first-last.qmd`, where `first` and `last` are
+    your first and last names (e.g. `hw1-gaston-sanchez.qmd`).
+
+-   Make sure the YAML header in your `qmd` files includes
+    `embed-resources: true`
+
+-   Submit both your qmd and HTML files to the corresponding assignment
+    submission in bCourses.
+
+-   Please note that submitting only one of the files will result in an
+    automatic 10% deduction.
+
+-   Also, if you submit the incorrect files you will receive no credit.
+:::
+
+------------------------------------------------------------------------
+
+# Subsetting Vectors and Factors
+
+Consider the following R objects related to the 50 states of the United
+States of America:
+
+-   `state.name`: character vector giving the full state names.
+
+-   `state.area`: numeric vector of state areas (in square miles).
+
+-   `state.region`: factor giving the region (Northeast, South, North
+    Central, West) that each state belongs to.
+
+Using the three objects listed above, write R commands that answer the
+following questions:
+
+a)  What is the name of the state with the smallest area? *Hint:* the
+    `which.min()` function is your friend.
+
+```{r}
+# your code
+state.name[which.min(state.area)]
+```
+
+<br>
+
+b)  What is the area of Maine?
+
+```{r}
+# your code
+state.area[state.name == "Maine"]
+```
+
+<br>
+
+c)  How many states have an area smaller than or equal to Maine?
+
+```{r}
+# your code
+length(state.name[state.area <= 33215])
+```
+
+<br>
+
+d)  How many states are in the Northeast region?
+
+```{r}
+# your code
+length(state.region[state.region == "Northeast"])
+```
+
+<br>
+
+e)  How many states are in regions other than the West?
+
+```{r}
+# your code
+length(state.region[state.region != "West"])
+```
+
+<br>
+
+f)  What is the mean area of those states located in the South?
+
+```{r}
+# your code
+mean(state.area[state.region == "South"])
+```
+
+<br>
+
+g)  What is the name of the State with the tenth largest area? *Hint*:
+    the `order()` function is your friend.
+
+```{r}
+# your code
+state.name[order(state.area, decreasing = TRUE)][10]
+```
+
+<br>
+
+h)  What is the third quartile (i.e. 75th percentile) of area among
+    states in the Northeast and North Central regions? *Hint*: the
+    `quantile()` function is your friend.
+
+```{r}
+# your code
+quantile(state.area[(state.region == "Northeast") | (state.region == "North Central")], probs = 0.75)
+```
+
+<br>
+
+------------------------------------------------------------------------
+
+# Vectors for *Kettle Chips* Data
+
+Refer to the data provided in the HTML file of instructions
+`hw1-problems.html`.
+
+## Creating Vectors
+
+Taking into account the data in the provided table, create R vectors for
+each of the columns, according to the following data types:
+
+-   `name`: name of product; character type
+
+-   `calories`: calories (calories); double type
+
+-   `sat_fat`: saturated fat (grams); double type
+
+-   `mono_fat`: monounsaturated fat (grams); integer type
+
+-   `sodium`: sodium (milligrams); double type
+
+-   `carbs`: total carbohydrate (grams); integer type
+
+-   `sugars`: whether chips contain sugars (`TRUE`: yes, `FALSE`: no)
+
+```{r}
+# your code
+# c("True", "True", "True", "False", "False", "False", "False", "True", "True", "False")
+
+name = c('buffalo blue', 'honey dijon', 'new york cheddar', 'pepperoncini', 'salt pepper', 'sea salt', 'sea salt vinegar', 'sour cream onion', 'sriracha', 'unsalted')
+
+calories = c(140, 140, 140, 140, 150, 150, 140, 140, 140, 150)
+
+sat_fat = c(0.5, 0.5, 1.0, 0.5, 1.0, 1.0, 1.0, 0.5, 1.0, 1.0)
+
+mono_fat = c(6L, 6L, 6L, 6L, 7L, 7L, 7L, 6L, 7L, 7L)
+
+sodium = c(160, 110, 140, 160, 160, 110, 180, 140, 125, 5)
+
+carbs = c(15, 16, 15, 15, 16, 15, 15, 15, 16, 16)
+
+sugars = c(TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, TRUE, TRUE, FALSE)
+```
+
+<br>
+
+## More Subsetting
+
+Write R commands---displaying the output---that answer the following
+questions. Answer each part in its individual code chunk. Do not use
+functions from any external package.
+
+a)  What is the name of the product with the smallest amount of sodium?
+
+```{r}
+# your code
+name[which.min(sodium)]
+```
+
+<br>
+
+b)  What is the number of calories of the product that has 180 mg of
+    sodium?
+
+```{r}
+# your code
+calories[sodium == 180]
+```
+
+<br>
+
+c)  How many products have sodium larger than the average (i.e. mean)
+    amount of sodium?
+
+```{r}
+# your code
+length(name[sodium > mean(sodium)])
+```
+
+<br>
+
+d)  How many products have between 120 and 170 milligrams of sodium
+    (including both 120 and 170 milligrams)?
+
+```{r}
+# your code
+length(name[sodium >= 120 & sodium <= 170])
+```
+
+<br>
+
+e)  What is the median number of calories for those products containing
+    sugar?
+
+```{r}
+# your code
+median(calories[sugars == TRUE])
+```
+
+<br>
+
+f)  What is the mean amount of saturated fat for those products with
+    grams of carbohydrates different from 15 grams?
+
+```{r}
+# your code
+mean(sat_fat[carbs != 15])
+```
+
+<br>
+
+g)  What is the first quartile (i.e. bottom 25th percentile) of sodium
+    for those products with more than 140 calories or carbohydrates less
+    than 16? *Hint*: the `quantile()` function is your friend.
+
+```{r}
+# your code
+quantile(sodium[(calories > 140) | (carbs < 16)], probs=.25)
+```
+
+<br>
+
+------------------------------------------------------------------------
+
+# Vectorization
+
+Consider the following vectors `a` and `b`:
+
+```{r}
+a = c('car', 'bike', 'bus', 'train', 'plane')
+
+b = c(-1, -2, 0, 1, 2)
+```
+
+For each of the following parts, indicate **True** or **False** for
+whether the given command involves vectorization (i.e. vectorized code):
+
+a)  `a[b != 0]`
+
+b)  `abs(b)`
+
+c)  `IQR(b)`
+
+d)  `a[max(b)]`
+
+e)  `toupper(a)`
+
+f)  `b[a == 'bike']`
+
+g)  `round(exp(b[1]), digits = 3)`
+
+h)  `sum(cos(b*pi))`
+
+<br>
+
+------------------------------------------------------------------------
+
+# Matrix Creation
+
+Consider the following vector `cam`:
+
+```{r}
+cam = c('c', 'a', 'm', 'p', 'a', 'n', 'i', 'l', 'e')
+```
+
+Write a single R command to answer each of the following parts.
+
+a)  Use the vector `cal` as the input data for `matrix()` in order to
+    create the following matrix:
+
+```         
+     [,1] [,2] [,3]
+[1,] "c"  "p"  "i" 
+[2,] "a"  "a"  "l" 
+[3,] "m"  "n"  "e" 
+```
+
+```{r}
+# your code
+matrix(c("c", "p", "i", "a", "a", "l", "m", "n", "e"), nrow=3, ncol=3, byrow=TRUE)
+```
+
+<br>
+
+b)  Use the vector `cam` as the input data for `matrix()` in order to
+    create the following matrix:
+
+```         
+     [,1] [,2] [,3]
+[1,] "c"  "a"  "m" 
+[2,] "p"  "a"  "n" 
+[3,] "i"  "l"  "e"  
+```
+
+```{r}
+# your code
+matrix(cam, nrow=3, ncol=3, byrow=TRUE)
+```
+
+<br>
+
+c)  Use the vector `cam` as the input data for `matrix()` in order to
+    create the following matrix:
+
+```         
+     [,1] [,2] [,3] [,4] [,5] [,6]
+[1,] "c"  "p"  "i"  "c"  "p"  "i" 
+[2,] "a"  "a"  "l"  "a"  "a"  "l" 
+[3,] "m"  "n"  "e"  "m"  "n"  "e" 
+```
+
+```{r}
+# your code
+matrix(cam, nrow=3, ncol=6)
+```
+
+<br>
+
+d)  Use the vector `cam` as the input data for `matrix()` in order to
+    create the following matrix:
+
+```         
+     [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9]
+[1,] "c"  "a"  "m"  "p"  "a"  "n"  "i"  "l"  "e" 
+[2,] "c"  "a"  "m"  "p"  "a"  "n"  "i"  "l"  "e" 
+```
+
+```{r}
+# your code
+matrix(cam, nrow=2, ncol=9, byrow=TRUE)
+```
+
+<br>
+
+e)  Subset the vector `cam` and pass it as the input data for `matrix()`
+    in order to create the following matrix:
+
+```         
+     [,1] [,2] [,3]
+[1,] "c"  "a"  "m" 
+[2,] "c"  "a"  "m" 
+[3,] "c"  "a"  "m" 
+```
+
+```{r}
+# your code
+matrix(cam[1:3], nrow=3, ncol=3, byrow=TRUE)
+```
+
+<br>
+
+f)  Use the function `cbind()` to form a matrix `CAM1` by combining the
+    first four elements of `cam` (1st column) and the last four elements
+    of `cam` (2nd column); see output below. *Hint*: the functions
+    `head()` and `tail()` can be your friends. Display your `CAM1`
+    matrix.
+
+```         
+     [,1] [,2]
+[1,] "c"  "n" 
+[2,] "a"  "i" 
+[3,] "m"  "l" 
+[4,] "p"  "e" 
+```
+
+```{r}
+# your code
+CAM1 = cbind(head(cam, 4), tail(cam, 4))
+CAM1
+```
+
+<br>
+
+g)  Use the function `rbind()` to form a matrix `CAM2` by combining the
+    first three elements of `cam` (1st row), elements 4 to 6 (2nd row),
+    and the last three elements of `cam` (3rd row); see output below.
+
+```         
+     [,1] [,2] [,3]
+[1,] "c"  "a"  "m" 
+[2,] "p"  "a"  "n" 
+[3,] "i"  "l"  "e" 
+```
+
+```{r}
+# your code
+CAM2 = rbind(cam[1:3], cam[4:6], cam[(length(cam)-2):length(cam)])
+CAM2
+```
+
+<br>
+
+------------------------------------------------------------------------
+
+# Matrix Subsetting
+
+Consider the matrix `state.x77` (it's a built-in matrix in R) which
+contains data from the 1970s related to the 50 states of the United
+States of America. For more information about this matrix, see
+`help(state.x77)`.
+
+Using the matrix `state.x77`, write R commands that answer the following
+questions:
+
+a)  What is the mean percentage of high-school graduates?
+
+```{r}
+# your code
+mean(state.x77[, "HS Grad"])
+```
+
+<br>
+
+b)  What is the name of the State with the lowest life expectancy?
+
+```{r}
+# your code
+state.name[which.min(state.x77[, "Life Exp"])]
+```
+
+<br>
+
+c)  What is the name of the State with the largest percentage of
+    high-school graduates? **Note**: The output should be only the name
+    of the state, and nothing else.
+
+```{r}
+# your code
+state.name[which.max(state.x77[, "HS Grad"])]
+```
+
+<br>
+
+d)  Write a command that returns a matrix with columns `Frost`,
+    `Income`, and `Illiteracy`, (in this order) for the first 5 states
+    in `state.x77`:
+
+```{r}
+# your code
+head(state.x77[1:5, c("Frost", "Income", "Illiteracy")])
+```
+
+<br>
+
+e)  How many states have per capita income greater than 5000 and less
+    than or equal to 9000?
+
+```{r}
+# your code
+sum(state.x77[, "Income"] > 5000 & state.x77[, "Income"] <= 9000)
+```
+
+<br>
+
+f)  Create a matrix `VW` by subsetting the last five states, as well as
+    columns `Population`, `Income`, `Murder`. Rename the columns of `VW`
+    as `pop`, `inc`, `mur`. And display this matrix.
+
+```{r}
+# your code
+VW = state.x77[(nrow(state.x77)-4):nrow(state.x77), c("Population", "Income", "Murder")]
+colnames(VW) = c("pop", "inc", "mur")
+VW
+```
+
+<br>
+
+g)  What are the top-5 States with the largest percent of high-school
+    graduates (in decreasing order)? *Hint*: The `order()` function is
+    your friend.
+
+```{r}
+# your code
+head(state.name[order(state.x77[, "HS Grad"], decreasing = TRUE)], 5)
+```
+
+<br>
+
+------------------------------------------------------------------------
+
+## Rubric {.unnumbered .unlisted}
+
+-   😞   **None (0 pts)**: No submission; or terribly wrong; or
+    incorrect files.
+
+-   😟   **Deficient (1 pt)**: Displays minimal effort. Fairly
+    incomplete. Code is badly written and/or has various major issues.
+
+-   🙁   **Needs improvement (2 pts)**: Displays some effort. Doesn't
+    complete all components. Code is poorly written and/or has various
+    minor issues, possibly including a couple of major issues or
+    mistakes.
+
+-   😐   **Fair (3 pts)**: Decent effort. Hits all the elements.
+    Possibly a couple of minor mistakes or some non-minor issue. Code
+    written succinctly, but it could be better documented, and/or
+    formatted.
+
+-   🙂   **Good (4 pts)**: Solid effort. Hits all the elements. Possibly
+    a minor mistake. Fairly easy to follow (both the code and the
+    output).
+
+-   😀   **Excellent (5 pts)**: Finished all components of the
+    assignment correctly (without any issues, bugs, mistakes). Code
+    written succinctly, well documented, and easy to follow (both the
+    code and the output).
